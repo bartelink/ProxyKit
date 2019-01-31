@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp2.1</TargetFramework>
+    <TargetFrameworks>netcoreapp2.0;netcoreapp2.1;netcoreapp2.2;net471</TargetFrameworks>
     <RootNamespace>ProxyKit</RootNamespace>
   </PropertyGroup>
 
@@ -21,10 +21,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\ProxyKit\ProxyKit.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-
   </ItemGroup>
 
 </Project>

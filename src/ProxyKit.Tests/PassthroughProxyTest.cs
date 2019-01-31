@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
@@ -116,10 +117,23 @@ namespace ProxyKit
         public async Task PassthroughRequestsWithMalformedUserAgent(string methodType, int port)
         {
             _builder.Configure(app => app.RunProxy(
-                context => context
-                    .ForwardTo($"http://localhost:{port}/foo/")
-                    .AddXForwardedHeaders()
-                    .Send()));
+                context =>
+                {
+                    var forwardContext = context
+                        .ForwardTo($"http://localhost:{port}/foo/")
+                        .AddXForwardedHeaders();
+
+                    try
+                    {
+                        forwardContext.UpstreamRequest.Headers.TryGetValues("User-Agent", out var _);
+                    }
+                    catch (IndexOutOfRangeException)
+                    {
+                        forwardContext.UpstreamRequest.Headers.Remove("User-Agent");
+                    }
+
+                    return forwardContext.Send();
+                }));
             var server = new TestServer(_builder);
             var client = server.CreateClient();
 
@@ -128,7 +142,8 @@ namespace ProxyKit
                 Content = new StringContent("Request Body")
             };
 
-            request.Headers.Add("User-Agent", "Mozilla/4.0 (compatible (compatible; MSIE 8.0; Windows NT 6.1; Trident/7.0)");
+            request.Headers.TryAddWithoutValidation("User-Agent",
+                    "Mozilla/4.0 (compatible (compatible; MSIE 8.0; Windows NT 6.1; Trident/7.0)");
 
             var response = await client.SendAsync(request);
 

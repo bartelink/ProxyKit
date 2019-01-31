@@ -68,10 +68,10 @@ namespace ProxyKit
         {
             var httpContext = new DefaultHttpContext();
             httpContext.Request.Method = "GET";
-            httpContext.Request.Headers.TryAdd(XForwardedExtensions.XForwardedFor, "127.0.0.1");
-            httpContext.Request.Headers.TryAdd(XForwardedExtensions.XForwardedHost, "localhost");
-            httpContext.Request.Headers.TryAdd(XForwardedExtensions.XForwardedProto, "http");
-            httpContext.Request.Headers.TryAdd(XForwardedExtensions.XForwardedPathBase, "127.0.0.1");
+            httpContext.Request.Headers.Add(XForwardedExtensions.XForwardedFor, "127.0.0.1");
+            httpContext.Request.Headers.Add(XForwardedExtensions.XForwardedHost, "localhost");
+            httpContext.Request.Headers.Add(XForwardedExtensions.XForwardedProto, "http");
+            httpContext.Request.Headers.Add(XForwardedExtensions.XForwardedPathBase, "127.0.0.1");
 
             var services = new ServiceCollection();
             services.AddTransient<ProxyKitClient>();
